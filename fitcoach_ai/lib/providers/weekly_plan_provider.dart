@@ -21,6 +21,8 @@ class WeeklyPlanProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   Future<void> generatePlan(UserProfile profile) async {
+    if (_isLoading) return;
+
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -33,8 +35,11 @@ class WeeklyPlanProvider extends ChangeNotifier {
         _weeklyPlan = await _llmService.generateWeeklyPlan(profile);
         await _firestoreService.saveWeeklyPlan(_weeklyPlan!);
       }
-    } catch (_) {
+    } on Exception catch (error, stackTrace) {
+      debugPrint('WeeklyPlanProvider.generatePlan error: $error');
+      debugPrintStack(stackTrace: stackTrace);
       _errorMessage = 'No se pudo obtener/generar el plan semanal (IA/Firestore)';
+      _weeklyPlan = null;
     } finally {
       _isLoading = false;
       notifyListeners();

@@ -38,6 +38,7 @@ class LLMService {
       throw LLMApiException(response.statusCode, response.body);
     }
 
+    print('LLM raw response body: ${response.body}');
     final responseBody = jsonDecode(response.body) as Map<String, dynamic>;
     final rawText = _extractText(provider, responseBody);
     final cleaned = _cleanJsonContent(rawText);

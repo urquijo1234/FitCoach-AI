@@ -26,6 +26,40 @@ class FitCoachApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => WeeklyPlanProvider()),
       ],
       child: MaterialApp(
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF1A237E),
+            primary: const Color(0xFF1A237E),
+            secondary: const Color(0xFFFF6D00),
+            brightness: Brightness.light,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+          filledButtonTheme: FilledButtonThemeData(
+            style: FilledButton.styleFrom(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+          cardTheme: CardThemeData(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 1.5,
+            margin: EdgeInsets.zero,
+          ),
+        ),
         routes: {
           AuthScreen.routeName: (_) => const AuthScreen(),
           OnboardingScreen.routeName: (_) => const OnboardingScreen(),

@@ -8,6 +8,8 @@ class MacroSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const consumedRatio = 0.82;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -16,14 +18,35 @@ class MacroSummaryCard extends StatelessWidget {
           children: [
             const Text('Resumen de dieta de hoy', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            Text('${diet.dailyCalories} kcal', style: Theme.of(context).textTheme.headlineSmall),
+            Row(
+              children: [
+                const Icon(Icons.local_fire_department, color: Colors.deepOrange),
+                const SizedBox(width: 8),
+                Text('${diet.dailyCalories} kcal', style: Theme.of(context).textTheme.headlineSmall),
+              ],
+            ),
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: consumedRatio,
+                minHeight: 9,
+                backgroundColor: Colors.grey.shade300,
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.deepOrangeAccent),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Consumo ideal: ${(consumedRatio * 100).toStringAsFixed(0)}%',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _macro('Proteína', '${diet.macros.proteinG} g', Colors.redAccent),
-                _macro('Carbs', '${diet.macros.carbsG} g', Colors.blueAccent),
-                _macro('Grasas', '${diet.macros.fatG} g', Colors.orangeAccent),
+                _macro(Icons.fitness_center, 'Proteína', '${diet.macros.proteinG} g', Colors.redAccent),
+                _macro(Icons.grain, 'Carbs', '${diet.macros.carbsG} g', Colors.blueAccent),
+                _macro(Icons.opacity, 'Grasas', '${diet.macros.fatG} g', Colors.orangeAccent),
               ],
             ),
           ],
@@ -32,11 +55,11 @@ class MacroSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _macro(String label, String value, Color color) {
+  Widget _macro(IconData icon, String label, String value, Color color) {
     return Expanded(
       child: Column(
         children: [
-          CircleAvatar(radius: 5, backgroundColor: color),
+          Icon(icon, color: color),
           const SizedBox(height: 6),
           Text(label, textAlign: TextAlign.center),
           const SizedBox(height: 2),

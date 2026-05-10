@@ -47,7 +47,7 @@ class DailyRoutineScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Rutina de Hoy')),
       body: today == null || today.exercises.isEmpty
-          ? const Center(child: Text('Día de Descanso'))
+          ? const _ActiveRecoveryView()
           : _RoutineList(day: today),
     );
   }
@@ -69,9 +69,10 @@ class _RoutineList extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.read<WeeklyPlanProvider>();
 
-    return ListView.builder(
+    return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: day.exercises.length + 1,
+      separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         if (index == 0) {
           return Padding(
@@ -82,12 +83,61 @@ class _RoutineList extends StatelessWidget {
         final exercise = day.exercises[index - 1];
         return ExerciseCard(
           exercise: exercise,
-          onChanged: (value) {
+          onChanged: (value) async {
             if (value == null) return;
-            provider.updateExerciseCompletion(day.dayIndex, exercise.exerciseId, value);
+            await provider.updateExerciseCompletion(day.dayIndex, exercise.exerciseId, value);
           },
         );
       },
+    );
+  }
+}
+
+class _ActiveRecoveryView extends StatelessWidget {
+  const _ActiveRecoveryView();
+
+  @override
+  Widget build(BuildContext context) {
+    final tips = [
+      ('Movilidad de cadera', '2 series de 60 segundos'),
+      ('Estiramiento de espalda', '2 series de 45 segundos'),
+      ('Caminata ligera', '20 a 30 minutos a ritmo suave'),
+      ('Respiración diafragmática', '5 minutos para recuperación'),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.spa, color: Theme.of(context).colorScheme.secondary),
+              const SizedBox(width: 8),
+              Text('Active Recovery', style: Theme.of(context).textTheme.headlineSmall),
+            ],
+          ),
+          const SizedBox(height: 8),
+          const Text('Hoy toca recuperación activa. Mantén el cuerpo en movimiento sin sobrecargarlo.'),
+          const SizedBox(height: 16),
+          Expanded(
+            child: ListView.separated(
+              itemCount: tips.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                final tip = tips[index];
+                return Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.self_improvement),
+                    title: Text(tip.$1),
+                    subtitle: Text(tip.$2),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

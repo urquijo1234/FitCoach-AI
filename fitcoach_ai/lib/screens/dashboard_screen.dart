@@ -31,12 +31,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final weeklyPlan = context.watch<WeeklyPlanProvider>();
+    final userProfile = context.watch<UserProfileProvider>().profile;
+    final greeting = _greetingForHour(DateTime.now().hour);
+    final userName = userProfile?.name ?? 'Atleta';
 
     return Scaffold(
       appBar: AppBar(title: const Text('Dashboard')),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: _buildState(weeklyPlan),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _DashboardHeader(greeting: greeting, userName: userName),
+            const SizedBox(height: 16),
+            Expanded(child: _buildState(weeklyPlan)),
+          ],
+        ),
       ),
     );
   }
@@ -79,6 +89,58 @@ class _DashboardScreenState extends State<DashboardScreen> {
           label: const Text('Ver Rutina de Hoy'),
         ),
       ],
+    );
+  }
+
+  String _greetingForHour(int hour) {
+    if (hour < 12) return 'Buenos días';
+    if (hour < 19) return 'Buenas tardes';
+    return 'Buenas noches';
+  }
+}
+
+class _DashboardHeader extends StatelessWidget {
+  const _DashboardHeader({required this.greeting, required this.userName});
+
+  final String greeting;
+  final String userName;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [colors.primary, colors.secondary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 22,
+            backgroundColor: Colors.white24,
+            child: const Icon(Icons.person, color: Colors.white),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(greeting, style: const TextStyle(color: Colors.white70)),
+                Text(
+                  userName,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

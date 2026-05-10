@@ -20,7 +20,7 @@ class WeeklyPlanProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> loadOrGenerateWeeklyPlan(UserProfile profile) async {
+  Future<void> generatePlan(UserProfile profile) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -34,7 +34,7 @@ class WeeklyPlanProvider extends ChangeNotifier {
         await _firestoreService.saveWeeklyPlan(_weeklyPlan!);
       }
     } catch (_) {
-      _errorMessage = 'No se pudo obtener/generar el plan semanal';
+      _errorMessage = 'No se pudo obtener/generar el plan semanal (IA/Firestore)';
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -76,6 +76,9 @@ class WeeklyPlanProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+
+  Future<void> loadOrGenerateWeeklyPlan(UserProfile profile) async => generatePlan(profile);
 
   String _isoWeekLabel(DateTime date) {
     final target = date.add(Duration(days: 4 - (date.weekday == 7 ? 7 : date.weekday)));
